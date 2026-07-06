@@ -45,6 +45,11 @@ class SyncedLyrics:
     def is_empty(self) -> bool:
         return len(self.lines) == 0
 
+    @property
+    def full_text(self) -> str:
+        """Ghép toàn bộ lyrics thành 1 chuỗi (để detect mood)."""
+        return "\n".join(l.text for l in self.lines)
+
 
 class LyricsClient:
     """Fetch synced lyrics từ lrclib.net + cache local."""

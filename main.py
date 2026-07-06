@@ -18,6 +18,7 @@ import sys
 
 from lyrics_client import LyricsClient, SyncedLyrics
 from discord_updater import DiscordClient
+from mood_detector import detect_mood
 import config
 
 
@@ -41,8 +42,9 @@ def main():
     lyrics_client = LyricsClient()
 
     # --- State ---
-    current_start_ms: int = 0  # Dùng start_ms để detect bài mới (chính xác nhất)
+    current_start_ms: int = 0
     current_lyrics: SyncedLyrics = SyncedLyrics()
+    current_mood: str = "🎵"  # Emoji theo mood bài hát
     last_lyric_line: str = ""
     no_track_count = 0
 
@@ -76,14 +78,15 @@ def main():
 
                 if current_lyrics.is_empty:
                     print(f"   ⚠️ Không tìm thấy synced lyrics, hiển thị tên bài")
-                    status = config.STATUS_FORMAT.format(
-                        artist=track.artist, title=track.title,
-                        album=track.album, url=track.url,
-                    )
+                    current_mood = detect_mood(f"{track.artist} {track.title}")
+                    status = f"{current_mood} {track.artist} - {track.title}"
+                    if len(status) > 128:
+                        status = status[:125] + "..."
                     discord.set_custom_status(status)
                     last_lyric_line = status
                 else:
-                    print(f"   ✅ {len(current_lyrics.lines)} dòng lyrics ({current_lyrics.duration_sec:.0f}s)")
+                    current_mood = detect_mood(current_lyrics.full_text)
+                    print(f"   ✅ {len(current_lyrics.lines)} dòng lyrics, mood: {current_mood}")
 
                 current_start_ms = track.start_ms
                 last_lyric_line = ""
@@ -95,11 +98,11 @@ def main():
                 line = current_lyrics.get_current_line(elapsed)
 
                 if line and line != last_lyric_line:
-                    status_text = f"🎵 {line}"
+                    status_text = f"{current_mood} {line}"
                     if len(status_text) > 128:
                         status_text = status_text[:125] + "..."
                     discord.set_custom_status(status_text)
-                    print(f"🎤 [{elapsed:.0f}s] {line}")
+                    print(f"{current_mood} [{elapsed:.0f}s] {line}")
                     last_lyric_line = line
 
         else:

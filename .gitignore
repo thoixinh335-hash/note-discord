@@ -1,0 +1,14 @@
+# Giữ token secret
+.env
+.lyrics_cache
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/

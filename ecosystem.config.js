@@ -2,7 +2,7 @@ module.exports = {
   apps: [{
     name: "note-discord",
     script: "main.py",
-    interpreter: "python",
+    interpreter: "python3",
     autorestart: true,
     watch: false,
     max_restarts: 5,

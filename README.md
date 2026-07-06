@@ -37,12 +37,23 @@ DISCORD_USER_TOKEN=MTIzNDU2Nzg5...  # Token Discord của bạn
 ## ▶️ Chạy
 
 ```bash
-# 1. Mở Spotify desktop app
-# 2. Chạy bot
+# Local
 python main.py
+
+# Hoặc VPS với PM2 (giữ process sống mãi)
+npm i -g pm2
+pm2 start ecosystem.config.js
+pm2 save && pm2 startup   # auto-restart khi reboot
 ```
 
-Kết quả: Khi bạn nghe nhạc trên Spotify, Discord custom status sẽ hiển thị **dòng lyrics đang hát** theo real-time.
+Lệnh PM2 thường dùng:
+```bash
+pm2 logs note-discord   # xem log
+pm2 restart note-discord
+pm2 stop note-discord
+```
+
+Kết quả: Discord custom status hiển thị **dòng lyrics đang hát** với emoji theo mood.
 
 ---
 
